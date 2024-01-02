@@ -24,11 +24,11 @@ app.use(cookieParser())
 app.use(`/api/auth`, require('./router/authRoute'))
 
 //default route
-app.use(`**`,(req,res) =>{
+app.use(`*`,(req,res) =>{
     res.status(StatusCodes.SERVICE_UNAVAILABLE).json({msg:`Requested service path not available`})
 })
 //server Listen
 app.listen(PORT,() => {
     connectDb()
-    console.log(`sever has started and running at http://localhost:${PORT}`)
+    console.log(`server has started and running at http://localhost:${PORT}`)
 })
