@@ -3,6 +3,9 @@ require('dotenv').config()
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const { StatusCodes } = require('http-status-codes')
+
+const connectDb = require('./db/connect')
+
 const PORT = process.env.PORT
 
 //instance
@@ -14,8 +17,11 @@ app.use(express.json())   //json format of data
 
 //middleware
 app.use(cors())  //cross origin resource origin
-app.use(cookieParser())
+app.use(cookieParser()) 
 
+
+// api route
+app.use(`/api/auth`, require('./router/authRoute'))
 
 //default route
 app.use(`**`,(req,res) =>{
@@ -23,5 +29,6 @@ app.use(`**`,(req,res) =>{
 })
 //server Listen
 app.listen(PORT,() => {
+    connectDb()
     console.log(`sever has started and running at http://localhost:${PORT}`)
 })
