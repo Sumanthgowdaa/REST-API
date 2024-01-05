@@ -25,7 +25,7 @@ route.post(`/verify/user`,authController.verifyUser)
 route.post('/generate/password/link',authController.passwordLink)
 
 //update password
-route.patch('/password/update',authController.updatePassword)
+route.patch('/password/update',auth, authController.updatePassword)
 
 module.exports = route
 

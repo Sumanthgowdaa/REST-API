@@ -4,7 +4,8 @@ const User = require('../model/userModel')
 const comparePassword = require('../util/password')
 const createAccessToken = require('../util/token')
 const jwt = require('../util/token')
-
+const reset_password = require('../template/gen_password')
+const mailConfig = require('../util/mail.config')
 
 const authController = {
     register : async (req, res) => {
@@ -127,14 +128,34 @@ const authController = {
     
     verifyUser: async (req,res)=> {
         try {
-            res.json({msg:`verify user`})
+            let {email} = req.body
+
+            let extEmail = await User.findOne({email})
+            if(!extEmail)
+            return res.status(StatusCodes.CONFLICT).json({msg:`${email} does not exists`,status:false})
+            res.status(StatusCodes.ACCEPTED).json({msg:`Email id verification successfully`,status:true})
         } catch (err) {
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:`err`})
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:err})
         }
     },
     passwordLink: async (req,res) => {
         try {
-            res.json({msg:`pasword link`})
+            let {email} = req.body
+
+            let extEmail = await User.findOne({email})
+            if(!extEmail)
+            return res.status(StatusCodes.CONFLICT).json({msg:`${email} does not exists`,status:false})
+            //token
+            let passToken = await createAccessToken({id:extEmail._id })
+
+            //password reset template
+            let passTemplate = reset_password(extEmail.name,email,passToken)
+            
+            let subject = `Reset your Password`
+            //send email
+            let emailRes = await mailConfig(email,subject,passTemplate)
+
+            res.status(StatusCodes.ACCEPTED).json({msg:`password link successfully sent.`,status:emailRes})
         } catch (err) {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:`err`})
         }
@@ -142,7 +163,21 @@ const authController = {
     
     updatePassword: async(req,res) => {
         try {
-            res.json({msg:`update password`})
+            let id = req.userId
+            let {password} = req.body
+
+            
+            let extUser = await User.findById({_id:id})
+            if(!extUser)
+            return res.status(StatusCodes.CONFLICT).json({msg:`Requested user info not exists`})
+        
+            
+            //encrypt the password into hash
+            const encPass = await bcrypt.hash(password,10);
+            
+            //update 
+            await User.findByIdAndUpdate({_id:id}, {password:encPass} )
+            return res.status(StatusCodes.ACCEPTED).json({msg:`Password Successfully Updated`})
         } catch (err) {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:`err`})
         }
