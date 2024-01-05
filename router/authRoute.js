@@ -1,5 +1,7 @@
 const authController = require('../controller/authController')
 const route = require('express').Router()
+const auth = require('../middleware/auth')
+
 
 // user register
 route.post(`/register`,authController.register)
@@ -14,7 +16,16 @@ route.get(`/logout`,authController.logout)
 route.get(`/token`,authController.authToken)
 
 // current login user
-route.get(`/current/user`, authController.currentUser)
+route.get(`/current/user`, auth, authController.currentUser)
+
+//verify user
+route.post(`/verify/user`,authController.verifyUser)
+
+//generate password link
+route.post('/generate/password/link',authController.passwordLink)
+
+//update password
+route.patch('/password/update',authController.updatePassword)
 
 module.exports = route
 
