@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer')
+// const {castOject} = require('../middleware/userModel')
 
 const mailConfig = async (mTo,mSub,mTemplate) =>{
     try {

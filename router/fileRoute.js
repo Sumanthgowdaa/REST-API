@@ -1,10 +1,12 @@
 const fileRoute = require('express').Router()
-const { uploadFile,readAll, readSingle, deleteFile } = require('../controller/fileController')
+const {uploadFile, readFile, readSingleFile, deleteFile} = require('../controller/fileController')
 const auth = require('../middleware/auth')
 
 fileRoute.post(`/upload` , auth,uploadFile)
 
-fileRoute.get(`/all`,auth, readAll).get(`/single/:id`,auth, readSingle)
+fileRoute.get(`/all`,auth, readFile)
+
+fileRoute.get(`/single/:id`,auth, readSingleFile)
 
 fileRoute.delete(`/delete/:id`,auth,deleteFile)
 

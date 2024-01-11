@@ -2,7 +2,6 @@
 
 const {StatusCodes} = require("http-status-codes")
 const jwt = require('jsonwebtoken')
-
 const auth = async(req,res,next) => {
     try{
         //read the token from headers auth 2.0
