@@ -16,10 +16,6 @@ const app =express()
 app.use(express.urlencoded({extended:false}))  //query format of data
 app.use(express.json())   //json format of data
 
-// body parser
-app.use(express.urlencoded({extended:false})) // query form of data
-app.use(express.json()) //json form of data
-
 // public dir as static
 app.use(express.static('public'))
 
@@ -35,6 +31,7 @@ app.use(expressFileUpload({
 // api route
 app.use(`/api/auth`, require('./router/authRoute'))
 app.use(`/api/file`,require('./router/fileRoute'))
+app.use('/api/user', require('./router/userRoute'))
 
 //default route
 app.use(`*`,(req,res) =>{

@@ -101,28 +101,28 @@ const authController = {
             // read the login token from signed cookies
             const rToken = req.signedCookies.loginToken
             if(!rToken)
-                return res.status(StatusCodes.NOT_FOUND).json({msg : 'token not available'})
+                return res.status(StatusCodes.NOT_FOUND).json({msg : 'token not available',success:false})
 
             // valid user id or not
             await jwt.verify(rToken, process.env.ACCESS_SECRET, (err, user) => {
                 if(err)
-                    return res.status(StatusCodes.UNAUTHORIZED).json({msg : 'UnAuthorized login again'})
+                    return res.status(StatusCodes.UNAUTHORIZED).json({msg : 'UnAuthorized login again',success:false})
                 // if valid token
                 res.status(StatusCodes.OK).json({authToken:rToken})
             })
             res.json({msg : `auth token`})
         }catch(err){
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err.message})
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err.message,success:false})
         }
     },
     currentUser : async(req, res) => {
         try{
             let single = await User.findById({_id : req.userId}).select('-password')
             if(!single)
-                return res.status(StatusCodes.NOT_FOUND).json({msg : `userId not found`})
+                return res.status(StatusCodes.NOT_FOUND).json({msg : `userId not found`,success:false})
             res.status(StatusCodes.ACCEPTED).json({user: single})
         }catch(err){
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err.message})
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err.message,success:false})
         }
     },
     
@@ -132,8 +132,8 @@ const authController = {
 
             let extEmail = await User.findOne({email})
             if(!extEmail)
-            return res.status(StatusCodes.CONFLICT).json({msg:`${email} does not exists`,status:false})
-            res.status(StatusCodes.ACCEPTED).json({msg:`Email id verification successfully`,status:true})
+            return res.status(StatusCodes.CONFLICT).json({msg:`${email} does not exists`,success:false})
+            res.status(StatusCodes.ACCEPTED).json({msg:`Email id verification successfully`,success:true})
         } catch (err) {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:err})
         }
@@ -144,7 +144,7 @@ const authController = {
 
             let extEmail = await User.findOne({email})
             if(!extEmail)
-            return res.status(StatusCodes.CONFLICT).json({msg:`${email} does not exists`,status:false})
+            return res.status(StatusCodes.CONFLICT).json({msg:`${email} does not exists`,success:false})
             //token
             let passToken = await createAccessToken({id:extEmail._id })
 
@@ -155,9 +155,9 @@ const authController = {
             //send email
             let emailRes = await mailConfig(email,subject,passTemplate)
 
-            res.status(StatusCodes.ACCEPTED).json({msg:`password link successfully sent.`,status:emailRes})
+            res.status(StatusCodes.ACCEPTED).json({msg:`password link successfully sent.`,status:emailRes,success:true})
         } catch (err) {
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:`err`})
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:`err`,success:false})
         }
     },
     
@@ -169,7 +169,7 @@ const authController = {
             
             let extUser = await User.findById({_id:id})
             if(!extUser)
-            return res.status(StatusCodes.CONFLICT).json({msg:`Requested user info not exists`})
+            return res.status(StatusCodes.CONFLICT).json({msg:`Requested user info not exists`,success:false})
         
             
             //encrypt the password into hash
@@ -177,9 +177,9 @@ const authController = {
             
             //update 
             await User.findByIdAndUpdate({_id:id}, {password:encPass} )
-            return res.status(StatusCodes.ACCEPTED).json({msg:`Password Successfully Updated`})
+            return res.status(StatusCodes.ACCEPTED).json({msg:`Password Successfully Updated`,success:true})
         } catch (err) {
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:`err`})
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg:`err`,success:false})
         }
     }
     

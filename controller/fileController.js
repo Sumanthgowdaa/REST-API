@@ -26,14 +26,14 @@ const uploadFile = async (req, res) => {
 
         // no files are attached
         if(!req.files)
-        return res.status(StatusCodes.NOT_FOUND).json({msg:`No files to upload`})
+        return res.status(StatusCodes.NOT_FOUND).json({msg:`No files to upload`,success:false})
 
         //fetch user info
         let extUser = await User.findById({_id: id}).select('-password')
         //user id not found
         if(!extUser){
             removeTemp(product.tempFilePath)
-            return res.status(StatusCodes.CONFLICT).json({msg:`requested user id not found`})
+            return res.status(StatusCodes.CONFLICT).json({msg:`requested user id not found`,success:false})
         }
         
 
@@ -58,20 +58,20 @@ const uploadFile = async (req, res) => {
             await product.mv(path.resolve(__dirname, `../public/${file.name}`), async (err) => {
                 if(err){
                     removeTemp(product.tempFilePath)
-                    return res.status(StatusCodes.CONFLICT).json({ msg : err })
+                    return res.status(StatusCodes.CONFLICT).json({ msg : err , success:false})
                 }
 
                 let fileRes = await FileSchema.create({ userId:extUser._id, newName:filename, user : extUser, info : product })
 
-                res.status(StatusCodes.ACCEPTED).json({ msg : "File uploaded successfully", file : fileRes })
+                res.status(StatusCodes.ACCEPTED).json({ msg : "File uploaded successfully", file : fileRes, success:true})
 
             })
         } else  {
             removeTemp(req.files.product.tempFilePath)
-            return res.status(StatusCodes.CONFLICT).json({ msg : `updaload only .png and .jpg files` })
+            return res.status(StatusCodes.CONFLICT).json({ msg : `updaload only .png and .jpg files`,success:false })
         }   
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err, success:false})
     }
 }
 
@@ -83,7 +83,7 @@ const readFile = async (req, res) => {
         res.status(StatusCodes.OK).json({ length: files.length,files })
         
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err, success:false})
     }
 }
 
@@ -96,15 +96,15 @@ const readSingleFile = async (req, res) => {
         
         let extFile = await FileSchema.findById({_id: fileId})
         if(!extFile)
-        return res.status(StatusCodes.CONFLICT).json({msg:`Requested file ID not exists`})
+        return res.status(StatusCodes.CONFLICT).json({msg:`Requested file ID not exists`, success:false})
     
         //if file belogs to authorised or not
         if(userId != extFile.userId )
-        return res.status(StatusCodes.UNAUTHORIZED).json({msg:`Unauthorised file read..`})
+        return res.status(StatusCodes.UNAUTHORIZED).json({msg:`Unauthorised file read..` , success:false})
     
-        res.status(StatusCodes.ACCEPTED).json({file: extFile})
+        res.status(StatusCodes.ACCEPTED).json({file: extFile , success:true})
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err , success:false} )
     }
 }
 
@@ -116,11 +116,11 @@ const deleteFile = async (req, res) => {
         
         let extFile = await FileSchema.findById({_id: fileId})
         if(!extFile)
-        return res.status(StatusCodes.CONFLICT).json({msg:`Requested file ID not exists`})
+        return res.status(StatusCodes.CONFLICT).json({msg:`Requested file ID not exists` , success:false})
     
         //if file belogs to authorised or not
         if(userId != extFile.userId )
-        return res.status(StatusCodes.UNAUTHORIZED).json({msg:`Unauthorised file read..`})
+        return res.status(StatusCodes.UNAUTHORIZED).json({msg:`Unauthorised file read..` , success:false})
     
             //delete physical file from directory
             let filePath= path.resolve(__dirname, `../public/${extFile.newName}` )
@@ -133,14 +133,14 @@ const deleteFile = async (req, res) => {
                 // to remove file info from db collection
                 await FileSchema.findByIdAndDelete({_id: extFile._id})
                 
-                return res.status(StatusCodes.ACCEPTED).json({msg:`file deleted successfully`})
+                return res.status(StatusCodes.ACCEPTED).json({msg:`file deleted successfully` ,success:true})
             }else {
-                return res.json({msg:`file not exists`, extFile})
+                return res.json({msg:`file not exists`, extFile , success:false})
             }
         
-        res.json({msg : "delete file"})
+        // res.json({msg : "delete file"})
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err , success:false} )
     }
 }
 
@@ -149,10 +149,10 @@ const allFiles = async (req,res) => {
     try {
         let files = await FileSchema.find({})
         
-        res.status(StatusCodes.OK).json({ length: files.length,files })
+        res.status(StatusCodes.OK).json({ length: files.length,files, success:true })
         
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err , success:false})
     }
 }
 
