@@ -1,14 +1,14 @@
 const fileType = {
-    doc : "application/mswrod",
-    docx : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    pdf : "application/pdf",
-    ppt : "application/vnd.ms-powerpoint",
-    svg : "image/svg+xml",
-    pptx : "application/vnd.openxmlformats-officedocument.presentational.presentation",
-    jpg : "image/jpg",
-    png : "image/png",
-    mp4 : "vedio/mp4",
-    mp3 : "audio/mpeg"
+    doc: "application/msword",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ppt: "application/vnd.ms-powerpoint",
+    pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    pdf:  "application/pdf",
+    jpg: "image/jpeg",
+    png: "image/png",
+    svg: "image/svg+xml",
+    mp3: "audio/mpeg",
+    mp4: "video/mp4"
 }
 
 module.exports = fileType

@@ -1,65 +1,68 @@
 const { StatusCodes } = require('http-status-codes')
 const User = require('../model/userModel')
 
-const readAll = async (req, res) => {
+// read all users
+const readAll = async (req,res) => {
     try {
-        let usersList = await User.findOne({})
-        let users = usersList.filter((item) => item.role !== "admin")
-        return res.status(StatusCodes.OK).json({length : users.length, users, success : true})
-        res.json({msg : 'read all'})
+        let usersList = await User.find({})
+        let  users = usersList.filter((item) => item.role !== "admin")
+
+        return res.status(StatusCodes.OK).json({ length: users.length, users, success: true })
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err.message, success : false})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message, success: false })
     }
 }
 
-const readSingle = async (req, res) => {
+// read single user
+const readSingle = async (req,res) => {
     try {
-        let id = req.params.id;
+        let id  = req.params.id 
         let single = await User.findById(id)
-        if(!single)
-            res.status(StatusCodes.CONFLICT).json({msg : 'Requested id is not found'})
-        res.status(StatusCodes.OK).json({user : single, success : true})
+            if(!single)
+                return res.status(StatusCodes.CONFLICT).json({ msg: `requested user info not found`, success: false})
+
+        res.status(StatusCodes.OK).json({ user: single, success: true })
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err.message, success : false})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message, success: false })
     }
 }
 
-const updateUser = async (req, res) => {
+// update user
+const updateUser = async (req,res) => {
     try {
-        let id = req.params.id;
+        let id  = req.params.id 
         let single = await User.findById(id)
-        if(!single)
-            res.status(StatusCodes.CONFLICT).json({msg : 'Requested id is not found'})
-
+            if(!single)
+                return res.status(StatusCodes.CONFLICT).json({ msg: `requested email id not found`, success: false})
             // validating role
-        if(single.role === "admin")
-            return res.status(StatusCodes.FORBIDDEN).json({msg : 'Un-authorized update entry.. denied', success:false})
+        if(single.role === "admin") 
+            return res.status(StatusCodes.FORBIDDEN).json({ msg: `Un-authorized update entry.. denied`, success: false})
 
+        if(req.body.password) 
+            return res.status(StatusCodes.CONFLICT).json({ msg: `password cann't be updated..access denied`, success: false})
 
-        if(req.body.password)
-            return res.status(StatusCodes.CONFLICT).json({msg : 'password cannot be update.. denied', success:false})
-
-            await User.findByIdAndUpdate({_id : id}, req.body)
-        res.status(StatusCodes.ACCEPTED).json({msg : 'user info successfully updated', success:true})
+            await User.findByIdAndUpdate({ _id: id }, req.body)
+                            
+        res.status(StatusCodes.ACCEPTED).json({ msg: 'user info successfully updated', success: true })
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err.message, success:false})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message, success: false })
     }
 }
 
-const deleteUser = async (req, res) => {
+// delete user
+const deleteUser = async (req,res) => {
     try {
-        let id = req.params.id;
+        let id  = req.params.id 
         let single = await User.findById(id)
-        if(!single)
-            res.status(StatusCodes.CONFLICT).json({msg : 'Requested id is not found'})
+            if(!single)
+                return res.status(StatusCodes.CONFLICT).json({ msg: `requested email id not found`, success: false})
 
-     
-        await User.findByIdAndDelete({_id : id})
-        res.status(StatusCodes.OK).json({msg : 'user info successfully deleted', success:true})
-    
+            await User.findByIdAndDelete({_id: id })
+
+        res.status(StatusCodes.OK).json({ msg: 'user info successfully deleted', success: true })
     } catch (err) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({msg : err.message, success:false})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ msg: err.message, success: false })
     }
 }
 
-module.exports = {readAll, readSingle, updateUser, deleteUser}
+module.exports = { readAll, readSingle, updateUser, deleteUser}

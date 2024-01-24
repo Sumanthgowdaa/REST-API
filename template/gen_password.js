@@ -1,23 +1,25 @@
-const reset_password = (name,email,token) => {
+
+const reset_password =  (name, email, token) => {
     return `<div>
                 <main>
-                <div>
-                <p>Hello, ${name},your email is ${email} </p>
-                <h3>Follow this link to reset your password </h3>
-                <p>
-                <strong>
-                <a class="btn" target="blank" href= "http://localhost:4000/password/reset?token=${token} ">
-                    Reset Password
-                </a>
-                </strong>
-                </p>
+                    <div>
+                        <h1>Hello, ${name}, your email id is ${email} </h1>
+                        <h3>Follow this link to reset your password.. </h3>
+                        <p>
+                            <strong>
+                                <a class="btn" target="_blank" href="/password/reset?token=${token}">
+                                    Reset Password
+                                </a>
+                            </strong>
+                        </p>
 
-                <p>If you didn't want to reset password,kindly in=gnore the link </p>
-                
-                <h4>Thanks </h4>
-                <h5> Team API </h5>
-                </div>
-                </main>    
+                        <p>If you didn't ask to reset your password, ignore this link.</p>
+
+                        <h3>Thanks,</h3>
+                        <h4>Team API.</h4>
+                    </div>
+                </main>
             </div>`
 }
+
 module.exports = reset_password

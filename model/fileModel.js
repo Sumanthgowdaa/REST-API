@@ -1,33 +1,37 @@
 const mongoose = require('mongoose')
-const fileSchema = new mongoose.Schema({
 
-    userId:{
-        type:String,
-        required:true,
-        trim:true
+const fileSchema = new mongoose.Schema({
+    userId: {
+        type: String,
+        required: true,
+        trim: true
     },
-    newName:{
-        type:String,
-        required:true,
-        trim:true,
-        unique:true
+    newName: {
+        type: String,
+        required: true,
+        trim: true,
+        unique: true
     },
-    
-    user:{
+    extName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    user: {
         type: Object,
         required: true
     },
     info: {
         type: Object,
-        required:true
+        required: true
     },
     isActive: {
-        type:Boolean,
-        default:true
-    } 
+        type: Boolean,
+        default: true
+    }
 },{
-    collection:'files',
+    collection: 'files',
     timestamps: true
 })
 
-module.exports = mongoose.model('FileSchema',fileSchema)
+module.exports = mongoose.model('FileSchema', fileSchema)

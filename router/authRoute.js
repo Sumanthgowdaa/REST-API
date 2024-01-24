@@ -19,7 +19,7 @@ route.get(`/token`,authController.authToken)
 route.get(`/current/user`, auth, authController.currentUser)
 
 //verify user
-route.post(`/verify/user`,authController.verifyUser)
+route.post(`/verify/user`, authController.verfiyUser)
 
 //generate password link
 route.post('/generate/password/link',authController.passwordLink)
