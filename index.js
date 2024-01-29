@@ -6,7 +6,7 @@ const { StatusCodes } = require('http-status-codes')
 const PORT = process.env.PORT
 const connectDb = require('./db/connect')
 const expressFileUpload = require('express-fileupload')
-
+const path = require('path')
 
 
 //instance
@@ -18,6 +18,7 @@ app.use(express.json())   //json format of data
 
 // public dir as static
 app.use(express.static('public'))
+app.use(express.static("build"))
 
 //middleware
 app.use(cors())  //cross origin resource origin
@@ -34,8 +35,8 @@ app.use(`/api/file`,require('./router/fileRoute'))
 app.use('/api/user', require('./router/userRoute'))
 
 //default route
-app.use(`*`,(req,res) =>{
-    res.status(StatusCodes.SERVICE_UNAVAILABLE).json({msg:`Requested service path not available`})
+app.use(`*`,(res) =>{
+    res.status(StatusCodes.SERVICE_UNAVAILABLE).json({msg:`Requested service path not available`,success:false})
 
 })
 //server Listen
