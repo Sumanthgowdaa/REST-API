@@ -28,6 +28,14 @@ app.use(expressFileUpload({
     useTempFiles: true
 }))
 
+// PRODUCTION CONTROLLER
+if(process.env.SERVER === "production"){
+    // executes in production mode
+    app.use(`/`,(req,res,next) => {
+        return res.sendFile(path.resolve(__dirname,`./build/index.html`))
+        next()
+    })
+}
 
 // api route
 app.use(`/api/auth`, require('./router/authRoute'))
