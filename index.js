@@ -40,13 +40,13 @@ if(process.env.SERVER === "production"){
 // api route
 app.use(`/api/auth`, require('./router/authRoute'))
 app.use(`/api/file`,require('./router/fileRoute'))
-app.use('/api/user', require('./router/userRoute'))
+app.use(`/api/user`, require('./router/userRoute'))
 
 //default route
-// app.use(`*`,(res) =>{
-//     res.status(StatusCodes.SERVICE_UNAVAILABLE).json({msg:`Requested service path not available`,success:false})
+app.use(`*`,(res) =>{
+    res.status(StatusCodes.SERVICE_UNAVAILABLE).json({msg:`Requested service path not available`,success:false})
 
-// })
+})
 //server Listen
 app.listen(PORT,() => {
     connectDb()
